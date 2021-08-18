@@ -2,8 +2,8 @@ const ClientError = require('../../exceptions/ClientError');
 
 class NotesHandler {
   constructor(service, validator) {
-    this._service = service;
-    this._validator = validator;
+    this.service = service;
+    this.validator = validator;
 
     this.postNoteHandler = this.postNoteHandler.bind(this);
     this.getNotesHandler = this.getNotesHandler.bind(this);
@@ -14,10 +14,10 @@ class NotesHandler {
 
   async postNoteHandler(request, h) {
     try {
-      this._validator.validateNotePayload(request.payload);
+      this.validator.validateNotePayload(request.payload);
       const { title = 'untitled', body, tags } = request.payload;
 
-      const noteId = await this._service.addNote({ title, body, tags });
+      const noteId = await this.service.addNote({ title, body, tags });
 
       const response = h.response({
         status: 'success',
@@ -49,8 +49,8 @@ class NotesHandler {
     }
   }
 
-  async getNotesHandler(request, h) {
-    const notes = await this._service.getNotes();
+  async getNotesHandler() {
+    const notes = await this.service.getNotes();
     return {
       status: 'success',
       data: {
@@ -62,7 +62,7 @@ class NotesHandler {
   async getNoteByIdHandler(request, h) {
     try {
       const { id } = request.params;
-      const note = await this._service.getNoteById(id);
+      const note = await this.service.getNoteById(id);
       return {
         status: 'success',
         data: {
@@ -92,10 +92,10 @@ class NotesHandler {
 
   async putNoteByIdHandler(request, h) {
     try {
-      this._validator.validateNotePayload(request.payload);
+      this.validator.validateNotePayload(request.payload);
       const { id } = request.params;
 
-      await this._service.editNoteById(id, request.payload);
+      await this.service.editNoteById(id, request.payload);
 
       return {
         status: 'success',
@@ -125,7 +125,7 @@ class NotesHandler {
   async deleteNoteByIdHandler(request, h) {
     try {
       const { id } = request.params;
-      await this._service.deleteNoteById(id);
+      await this.service.deleteNoteById(id);
       return {
         status: 'success',
         message: 'Catatan berhasil dihapus',
